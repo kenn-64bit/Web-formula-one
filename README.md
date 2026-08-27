@@ -45,6 +45,13 @@ Pricing "Join VIP"  →  /api/checkout (Xendit invoice)  →  hosted checkout
 The single landing page (`/`) renders for design work; `/api/*` routes stay
 non-functional until real credentials are filled in.
 
+The hero background is a WebGL grid-distortion field (`three`,
+`src/components/backgrounds/GridDistortion.tsx`, adapted from reactbits): a
+procedural cyan telemetry grid that ripples on mouse movement. It is loaded
+client-side only, pauses when scrolled offscreen, and falls back to a static
+halftone + glow under `prefers-reduced-motion` or when WebGL is unavailable
+(`src/components/backgrounds/HeroBackground.tsx`).
+
 ## Key files
 
 | Area | Path |

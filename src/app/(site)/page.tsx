@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { CutButton } from "@/components/ui/CutButton";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { HalftoneField } from "@/components/ui/HalftoneField";
+import { HeroBackground } from "@/components/backgrounds/HeroBackground";
 import { HowItWorks } from "@/components/HowItWorks";
 import { PricingSection } from "@/components/PricingSection";
 import {
@@ -41,13 +41,8 @@ export default function HomePage() {
     <>
       {/* HERO */}
       <section className="relative flex min-h-[720px] items-center justify-center overflow-hidden px-5 py-24">
-        <HalftoneField className="[mask-image:radial-gradient(60%_60%_at_50%_40%,black,transparent)]" />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 top-[38%] h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-30 blur-[120px]"
-          style={{ background: ACCENTS.cyan }}
-        />
-        <div className="relative mx-auto max-w-[720px] text-center">
+        <HeroBackground />
+        <div className="relative z-10 mx-auto max-w-[720px] text-center">
           <p className="mono-label text-[12px] tracking-[0.1em] text-cyan">
             VIP Racing Signal Intelligence
           </p>
