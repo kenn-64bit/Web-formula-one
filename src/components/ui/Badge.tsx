@@ -1,6 +1,9 @@
 import { cn } from "@/lib/cn";
 
-/** 28px square badge — filled if `included`, outline-only if not. */
+/**
+ * 28px square badge. Included → accent-filled with a dark check.
+ * Not included → dim outline only.
+ */
 export function FeatureBadge({
   included,
   accent,
@@ -12,13 +15,31 @@ export function FeatureBadge({
 }) {
   return (
     <span
+      role="img"
+      aria-label={label}
       title={label}
-      className={cn("inline-block h-7 w-7 border-2")}
+      className={cn(
+        "inline-grid h-7 w-7 place-items-center border-2",
+        !included && "opacity-30",
+      )}
       style={{
         borderColor: accent,
         backgroundColor: included ? accent : "transparent",
       }}
-    />
+    >
+      {included ? (
+        <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden>
+          <path
+            d="M5 13l4 4L19 7"
+            fill="none"
+            stroke="#0B0E17"
+            strokeWidth={3}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      ) : null}
+    </span>
   );
 }
 

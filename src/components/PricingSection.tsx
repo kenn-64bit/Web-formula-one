@@ -104,19 +104,26 @@ export function PricingSection() {
           Classification / Full Spec Sheet
         </h2>
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[640px] border-collapse">
+          <table className="w-full min-w-[680px] border-collapse">
+            <colgroup>
+              <col className="w-16" />
+              <col />
+              <col className="w-24" />
+              <col className="w-24" />
+              <col className="w-24" />
+            </colgroup>
             <thead>
-              <tr className="text-left">
-                <th className="w-16 pb-3 font-mono text-[12px] font-normal text-text-secondary">
+              <tr>
+                <th className="pb-4 text-left font-mono text-[12px] font-normal text-text-secondary">
                   #
                 </th>
-                <th className="pb-3 font-body text-[13px] font-normal text-text-secondary">
+                <th className="pb-4 text-left font-body text-[13px] font-normal text-text-secondary">
                   Feature
                 </th>
                 {PLAN_LIST.map((p) => (
                   <th
                     key={p.id}
-                    className="w-20 pb-3 text-right font-body text-[13px] font-normal"
+                    className="mono-label pb-4 text-center text-[11px] font-medium"
                     style={{ color: p.accent }}
                   >
                     {p.name}
@@ -128,24 +135,21 @@ export function PricingSection() {
               {LEADERBOARD.map((row, i) => (
                 <tr
                   key={row.feature}
-                  className="border-t"
-                  style={{ borderColor: "rgba(0,245,212,0.3)", height: 56 }}
+                  className="border-t border-b border-[rgba(0,245,212,0.3)]"
                 >
-                  <td className="font-mono text-[22px] text-text-secondary">
+                  <td className="h-14 font-mono text-[22px] text-text-secondary">
                     {i + 4}
                   </td>
-                  <td className="font-body text-[15px] text-text-primary">
+                  <td className="h-14 pr-4 font-body text-[15px] text-text-primary">
                     {row.feature}
                   </td>
                   {PLAN_LIST.map((p) => (
-                    <td key={p.id} className="text-right">
-                      <span className="inline-flex justify-end">
-                        <FeatureBadge
-                          included={row.tiers[p.id]}
-                          accent={p.accent}
-                          label={`${p.name}: ${row.tiers[p.id] ? "included" : "not included"}`}
-                        />
-                      </span>
+                    <td key={p.id} className="h-14 text-center align-middle">
+                      <FeatureBadge
+                        included={row.tiers[p.id]}
+                        accent={p.accent}
+                        label={`${p.name}: ${row.tiers[p.id] ? "included" : "not included"}`}
+                      />
                     </td>
                   ))}
                 </tr>
