@@ -96,48 +96,38 @@ body {
   text-transform: uppercase;
 }
 
-/* Always-on CSS grid floor behind the hero (shows even if WebGL fails) */
-.hero-css-grid {
-  background-color: #0b0e17;
+/* Always-on CSS field behind the hero (shows even if WebGL fails) */
+.hero-field {
+  background-color: #0a0a18;
   background-image:
-    linear-gradient(rgba(0, 245, 212, 0.14) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 245, 212, 0.14) 1px, transparent 1px),
-    linear-gradient(rgba(0, 245, 212, 0.35) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 245, 212, 0.35) 1px, transparent 1px);
-  background-size:
-    44px 44px,
-    44px 44px,
-    176px 176px,
-    176px 176px;
-  background-position: center;
-  animation: hero-grid-pan 16s linear infinite;
+    radial-gradient(60% 60% at 18% 28%, rgba(30, 27, 107, 0.9), transparent 70%),
+    radial-gradient(55% 55% at 74% 18%, rgba(43, 63, 212, 0.85), transparent 70%),
+    radial-gradient(70% 70% at 50% 66%, rgba(61, 107, 255, 0.7), transparent 72%),
+    radial-gradient(45% 45% at 86% 72%, rgba(109, 59, 214, 0.8), transparent 70%),
+    radial-gradient(50% 50% at 26% 84%, rgba(139, 63, 255, 0.75), transparent 70%),
+    radial-gradient(28% 28% at 44% 34%, rgba(214, 222, 255, 0.55), transparent 65%);
+  background-size: 180% 180%;
+  background-position: 50% 50%;
+  animation: hero-field-drift 26s ease-in-out infinite alternate;
   -webkit-mask-image: radial-gradient(
     120% 90% at 50% 45%,
     black 35%,
-    transparent 85%
+    transparent 88%
   );
-  mask-image: radial-gradient(120% 90% at 50% 45%, black 35%, transparent 85%);
+  mask-image: radial-gradient(120% 90% at 50% 45%, black 35%, transparent 88%);
 }
 
-@keyframes hero-grid-pan {
+@keyframes hero-field-drift {
   from {
-    background-position:
-      0 0,
-      0 0,
-      0 0,
-      0 0;
+    background-position: 40% 40%;
   }
   to {
-    background-position:
-      0 440px,
-      440px 0,
-      0 440px,
-      440px 0;
+    background-position: 60% 62%;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero-css-grid {
+  .hero-field {
     animation: none;
   }
 }

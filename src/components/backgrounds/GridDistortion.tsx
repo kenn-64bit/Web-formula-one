@@ -28,94 +28,82 @@ const fragmentShader = /* glsl */ `
 
   void main() {
     vec2 uv = vUv;
-    // slow idle warp so the grid moves without the cursor
+    // slow idle warp so the field drifts without the cursor
     uv += vec2(
-      sin(vUv.y * 8.0 + time * 0.30),
-      cos(vUv.x * 8.0 + time * 0.26)
-    ) * 0.004;
+      sin(vUv.y * 6.0 + time * 0.30),
+      cos(vUv.x * 6.0 + time * 0.26)
+    ) * 0.006;
 
     vec4 offset = texture2D(uDataTexture, vUv);
-    float r = texture2D(uTexture, uv - 0.060 * offset.rg).r;
-    float g = texture2D(uTexture, uv - 0.050 * offset.rg).g;
-    float b = texture2D(uTexture, uv - 0.042 * offset.rg).b;
+    float r = texture2D(uTexture, uv - 0.032 * offset.rg).r;
+    float g = texture2D(uTexture, uv - 0.030 * offset.rg).g;
+    float b = texture2D(uTexture, uv - 0.028 * offset.rg).b;
     gl_FragColor = vec4(r, g, b, 1.0);
   }
 `;
 
-/** Paints the base gradient + glowing cyan telemetry grid onto a canvas. */
-function paintGrid(canvas: HTMLCanvasElement, w: number, h: number) {
+type Blob = { x: number; y: number; r: number; color: string };
+
+/** Paints a soft flowing indigo/violet colour field onto a canvas (no grid). */
+function paintField(canvas: HTMLCanvasElement, w: number, h: number) {
   canvas.width = w;
   canvas.height = h;
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
-  const bg = ctx.createLinearGradient(0, 0, w * 0.35, h);
-  bg.addColorStop(0, "#0B0E17");
-  bg.addColorStop(0.55, "#141A28");
-  bg.addColorStop(1, "#0B0E17");
-  ctx.fillStyle = bg;
+  ctx.fillStyle = "#0A0A18";
   ctx.fillRect(0, 0, w, h);
 
-  const pitch = Math.max(34, Math.round(Math.min(w, h) / 16));
+  const s = Math.max(w, h);
+  const blobs: Blob[] = [
+    { x: 0.16, y: 0.28, r: 0.75, color: "#1E1B6B" },
+    { x: 0.72, y: 0.18, r: 0.7, color: "#2B3FD4" },
+    { x: 0.5, y: 0.62, r: 0.85, color: "#3D6BFF" },
+    { x: 0.85, y: 0.7, r: 0.6, color: "#6D3BD6" },
+    { x: 0.28, y: 0.82, r: 0.65, color: "#8B3FFF" },
+    { x: 0.62, y: 0.4, r: 0.45, color: "#2540B8" },
+    { x: 0.44, y: 0.34, r: 0.22, color: "rgba(214,222,255,0.85)" },
+    { x: 0.78, y: 0.52, r: 0.16, color: "rgba(224,214,255,0.8)" },
+  ];
 
-  ctx.shadowColor = "rgba(0, 245, 212, 0.55)";
-  ctx.shadowBlur = 6;
-
-  // minor grid
-  ctx.strokeStyle = "rgba(0, 245, 212, 0.24)";
-  ctx.lineWidth = 1;
-  ctx.beginPath();
-  for (let x = pitch; x < w; x += pitch) {
-    ctx.moveTo(x + 0.5, 0);
-    ctx.lineTo(x + 0.5, h);
+  ctx.globalCompositeOperation = "lighter";
+  for (const b of blobs) {
+    const cx = b.x * w;
+    const cy = b.y * h;
+    const rad = b.r * s;
+    const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, rad);
+    g.addColorStop(0, b.color);
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, w, h);
   }
-  for (let y = pitch; y < h; y += pitch) {
-    ctx.moveTo(0, y + 0.5);
-    ctx.lineTo(w, y + 0.5);
-  }
-  ctx.stroke();
+  ctx.globalCompositeOperation = "source-over";
 
-  // major lines every 4th cell
-  ctx.strokeStyle = "rgba(0, 245, 212, 0.45)";
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  for (let x = pitch * 4; x < w; x += pitch * 4) {
-    ctx.moveTo(x + 0.5, 0);
-    ctx.lineTo(x + 0.5, h);
-  }
-  for (let y = pitch * 4; y < h; y += pitch * 4) {
-    ctx.moveTo(0, y + 0.5);
-    ctx.lineTo(w, y + 0.5);
-  }
-  ctx.stroke();
+  // deepen the low corner for contrast
+  const shade = ctx.createLinearGradient(0, 0, w * 0.4, h);
+  shade.addColorStop(0, "rgba(6,6,18,0)");
+  shade.addColorStop(1, "rgba(4,4,14,0.45)");
+  ctx.fillStyle = shade;
+  ctx.fillRect(0, 0, w, h);
 
-  // bright horizon
-  ctx.strokeStyle = "rgba(0, 245, 212, 0.7)";
-  ctx.lineWidth = 2;
-  ctx.beginPath();
-  ctx.moveTo(0, Math.round(h * 0.5) + 0.5);
-  ctx.lineTo(w, Math.round(h * 0.5) + 0.5);
-  ctx.stroke();
-  ctx.shadowBlur = 0;
-
-  // edge vignette
+  // soft edge vignette
   const v = ctx.createRadialGradient(
     w / 2,
     h / 2,
-    Math.min(w, h) * 0.25,
+    Math.min(w, h) * 0.2,
     w / 2,
     h / 2,
-    Math.max(w, h) * 0.75,
+    Math.max(w, h) * 0.8,
   );
-  v.addColorStop(0, "rgba(11,14,23,0)");
-  v.addColorStop(1, "rgba(11,14,23,0.5)");
+  v.addColorStop(0, "rgba(6,6,16,0)");
+  v.addColorStop(1, "rgba(6,6,16,0.55)");
   ctx.fillStyle = v;
   ctx.fillRect(0, 0, w, h);
 }
 
 export default function GridDistortion({
-  grid = 15,
-  mouse = 0.12,
+  grid = 6,
+  mouse = 0.4,
   strength = 0.16,
   relaxation = 0.9,
   className,
@@ -154,7 +142,7 @@ export default function GridDistortion({
     camera.position.z = 2;
 
     const texCanvas = document.createElement("canvas");
-    paintGrid(texCanvas, 1024, 1024);
+    paintField(texCanvas, 1024, 1024);
     const imageTexture = new THREE.CanvasTexture(texCanvas);
     imageTexture.colorSpace = THREE.SRGBColorSpace;
     imageTexture.minFilter = THREE.LinearFilter;
@@ -209,7 +197,7 @@ export default function GridDistortion({
 
       const tw = Math.min(1400, Math.round(width));
       const th = Math.min(1400, Math.round(height));
-      paintGrid(texCanvas, tw, th);
+      paintField(texCanvas, tw, th);
       imageTexture.needsUpdate = true;
     }
 
