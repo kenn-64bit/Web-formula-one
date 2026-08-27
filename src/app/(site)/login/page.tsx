@@ -8,7 +8,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
 function LoginForm() {
   const params = useSearchParams();
-  const next = params.get("next") ?? "/dashboard";
+  const next = params.get("next") ?? "/pricing";
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -6,7 +6,8 @@ with a full payment → access pipeline:
 ```
 Pricing "Join VIP"  →  /api/checkout (Xendit invoice)  →  hosted checkout
         →  Xendit webhook /api/webhooks/xendit  →  Supabase subscription = active (+30d)
-        →  Telegram single-use invite link  →  shown on /dashboard
+        →  Telegram single-use invite link generated (delivered via bot DM once the
+           user is linked — see Notes)
         →  hourly Vercel Cron /api/cron/expire  →  expired users kicked from VIP channel
         →  renewal re-runs the webhook path with a fresh link
 ```
@@ -40,18 +41,9 @@ Pricing "Join VIP"  →  /api/checkout (Xendit invoice)  →  hosted checkout
 
 ## Debugging the frontend (no real keys)
 
-`.env.local` ships with placeholder values and `NEXT_PUBLIC_PREVIEW_MODE=1`, so
-`npm run dev` runs out of the box. In preview mode:
-
-- **Home / Pricing** render normally.
-- **Dashboard** skips Supabase auth and renders with `MOCK_SUBSCRIPTION`
-  (`src/lib/subscription.ts`) — active Podium plan, ~18 days left, usage 92/100 so
-  the RPM bar shows its redline.
-- **Login** renders; the magic-link send needs real Supabase keys.
-- `/api/*` routes stay non-functional (they need real credentials).
-
-Preview mode is gated to non-production builds (`src/lib/preview.ts`). To go live,
-fill the real values from `.env.example` and set `NEXT_PUBLIC_PREVIEW_MODE=0`.
+`.env.local` ships with placeholder values so `npm run dev` runs out of the box.
+Home, Pricing, and Login render for design work; `/api/*` routes and the magic-link
+send stay non-functional until real credentials are filled in.
 
 ## Key files
 
@@ -59,7 +51,7 @@ fill the real values from `.env.example` and set `NEXT_PUBLIC_PREVIEW_MODE=0`.
 | --- | --- |
 | Design tokens / motifs | `src/app/globals.css` |
 | UI primitives | `src/components/ui/*` (`GlassCard`, `CutButton`, `RpmBar`, `HalftoneField`, `Badge`, `CheckeredDivider`) |
-| Pages | `src/app/(site)/page.tsx`, `.../pricing/page.tsx`, `.../login/page.tsx`, `src/app/dashboard/*` |
+| Pages | `src/app/(site)/page.tsx`, `.../pricing/page.tsx`, `.../login/page.tsx` |
 | Plans / feature matrix | `src/lib/plans.ts` |
 | Checkout | `src/app/api/checkout/route.ts` |
 | Webhook | `src/app/api/webhooks/xendit/route.ts` |
@@ -93,8 +85,12 @@ fill the real values from `.env.example` and set `NEXT_PUBLIC_PREVIEW_MODE=0`.
 
 - **Billing model**: fixed 30-day access per paid invoice, manual renewal. Extends
   from `max(now, current_period_end)` so early renewals stack.
-- **Usage metric** (`usage_count` / `usage_limit`) is a placeholder wired to the
-  RPM bar so the >90% redline is demonstrable; point it at a real counter later.
-- **Telegram auto-DM** needs `telegram_user_id`, which requires a `/start <token>`
-  deep-link linking flow (not built). Until then the dashboard always shows the
-  invite link and the cron kick is skipped for unlinked users.
+- **No dashboard**: the app is Home + Pricing + Login only. The subscription state
+  lives in Supabase; there is no logged-in telemetry screen.
+- **Invite-link delivery**: the webhook generates the single-use link and stores it
+  on the `subscriptions` row. Automatic delivery needs `telegram_user_id`, which
+  requires a `/start <token>` deep-link linking flow (not built). Until then, read
+  `invite_link` from the row and send it manually; the cron kick is also skipped for
+  unlinked users.
+- The `subscriptions.usage_count` / `usage_limit` columns are unused by the current
+  UI but kept for a future counter.

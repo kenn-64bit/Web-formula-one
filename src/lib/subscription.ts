@@ -19,22 +19,6 @@ export type SubscriptionRow = {
 
 const DAY_MS = 86_400_000;
 
-/** Mock row used by preview mode (see `src/lib/preview.ts`) for design work. */
-export const MOCK_SUBSCRIPTION: SubscriptionRow = {
-  id: "preview-0000",
-  user_id: "preview-user",
-  tier: "podium",
-  status: "active",
-  current_period_end: new Date(Date.now() + 18 * DAY_MS).toISOString(),
-  telegram_user_id: null,
-  invite_link: "https://t.me/+PREVIEWinviteLINKplaceholder00",
-  usage_count: 92,
-  usage_limit: 100,
-  xendit_invoice_id: "inv_preview_0000",
-  created_at: new Date(Date.now() - 12 * DAY_MS).toISOString(),
-  updated_at: new Date().toISOString(),
-};
-
 /**
  * New period end after a successful payment: extend from whichever is later —
  * now, or the existing (still-active) period end.
