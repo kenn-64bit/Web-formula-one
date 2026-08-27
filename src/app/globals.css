@@ -98,14 +98,14 @@ body {
 
 /* Always-on CSS field behind the hero (shows even if WebGL fails) */
 .hero-field {
-  background-color: #0a0a18;
+  background-color: #0b0e17;
   background-image:
-    radial-gradient(60% 60% at 18% 28%, rgba(30, 27, 107, 0.9), transparent 70%),
-    radial-gradient(55% 55% at 74% 18%, rgba(43, 63, 212, 0.85), transparent 70%),
-    radial-gradient(70% 70% at 50% 66%, rgba(61, 107, 255, 0.7), transparent 72%),
-    radial-gradient(45% 45% at 86% 72%, rgba(109, 59, 214, 0.8), transparent 70%),
-    radial-gradient(50% 50% at 26% 84%, rgba(139, 63, 255, 0.75), transparent 70%),
-    radial-gradient(28% 28% at 44% 34%, rgba(214, 222, 255, 0.55), transparent 65%);
+    radial-gradient(60% 60% at 18% 28%, rgba(14, 42, 44, 0.9), transparent 70%),
+    radial-gradient(55% 55% at 74% 18%, rgba(18, 54, 66, 0.85), transparent 70%),
+    radial-gradient(72% 72% at 50% 66%, rgba(0, 245, 212, 0.22), transparent 72%),
+    radial-gradient(45% 45% at 86% 72%, rgba(12, 74, 70, 0.85), transparent 70%),
+    radial-gradient(50% 50% at 26% 84%, rgba(0, 200, 190, 0.18), transparent 70%),
+    radial-gradient(24% 24% at 44% 34%, rgba(210, 255, 248, 0.4), transparent 65%);
   background-size: 180% 180%;
   background-position: 50% 50%;
   animation: hero-field-drift 26s ease-in-out infinite alternate;

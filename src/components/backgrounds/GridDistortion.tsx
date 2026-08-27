@@ -51,19 +51,19 @@ function paintField(canvas: HTMLCanvasElement, w: number, h: number) {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
-  ctx.fillStyle = "#0A0A18";
+  ctx.fillStyle = "#0B0E17";
   ctx.fillRect(0, 0, w, h);
 
   const s = Math.max(w, h);
   const blobs: Blob[] = [
-    { x: 0.16, y: 0.28, r: 0.75, color: "#1E1B6B" },
-    { x: 0.72, y: 0.18, r: 0.7, color: "#2B3FD4" },
-    { x: 0.5, y: 0.62, r: 0.85, color: "#3D6BFF" },
-    { x: 0.85, y: 0.7, r: 0.6, color: "#6D3BD6" },
-    { x: 0.28, y: 0.82, r: 0.65, color: "#8B3FFF" },
-    { x: 0.62, y: 0.4, r: 0.45, color: "#2540B8" },
-    { x: 0.44, y: 0.34, r: 0.22, color: "rgba(214,222,255,0.85)" },
-    { x: 0.78, y: 0.52, r: 0.16, color: "rgba(224,214,255,0.8)" },
+    { x: 0.16, y: 0.28, r: 0.78, color: "#0E2A2C" },
+    { x: 0.72, y: 0.18, r: 0.7, color: "#123642" },
+    { x: 0.5, y: 0.64, r: 0.9, color: "rgba(0, 245, 212, 0.28)" },
+    { x: 0.86, y: 0.72, r: 0.58, color: "#0C4A46" },
+    { x: 0.26, y: 0.84, r: 0.6, color: "rgba(0, 200, 190, 0.22)" },
+    { x: 0.62, y: 0.4, r: 0.4, color: "#161B26" },
+    { x: 0.8, y: 0.5, r: 0.2, color: "rgba(255, 128, 0, 0.12)" },
+    { x: 0.44, y: 0.34, r: 0.24, color: "rgba(210, 255, 248, 0.5)" },
   ];
 
   ctx.globalCompositeOperation = "lighter";
@@ -81,8 +81,8 @@ function paintField(canvas: HTMLCanvasElement, w: number, h: number) {
 
   // deepen the low corner for contrast
   const shade = ctx.createLinearGradient(0, 0, w * 0.4, h);
-  shade.addColorStop(0, "rgba(6,6,18,0)");
-  shade.addColorStop(1, "rgba(4,4,14,0.45)");
+  shade.addColorStop(0, "rgba(11,14,23,0)");
+  shade.addColorStop(1, "rgba(8,10,18,0.5)");
   ctx.fillStyle = shade;
   ctx.fillRect(0, 0, w, h);
 
@@ -95,8 +95,8 @@ function paintField(canvas: HTMLCanvasElement, w: number, h: number) {
     h / 2,
     Math.max(w, h) * 0.8,
   );
-  v.addColorStop(0, "rgba(6,6,16,0)");
-  v.addColorStop(1, "rgba(6,6,16,0.55)");
+  v.addColorStop(0, "rgba(11,14,23,0)");
+  v.addColorStop(1, "rgba(11,14,23,0.62)");
   ctx.fillStyle = v;
   ctx.fillRect(0, 0, w, h);
 }
