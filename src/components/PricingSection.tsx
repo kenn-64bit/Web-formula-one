@@ -7,7 +7,7 @@ import {
   PLANS,
   PLAN_LIST,
   LEADERBOARD,
-  formatPeso,
+  formatPrice,
   type Plan,
 } from "@/lib/plans";
 import { cn } from "@/lib/cn";
@@ -15,17 +15,28 @@ import { cn } from "@/lib/cn";
 function PodiumCard({ plan }: { plan: Plan }) {
   const isP1 = plan.position === 1;
   return (
-    <GlassCard
-      cut
-      className={cn(
-        "relative flex h-full flex-col overflow-hidden p-8",
-        isP1 && "md:-mt-12 md:pb-20",
-      )}
-      style={{
-        borderColor: plan.accent,
-        boxShadow: isP1 ? `0 0 24px ${plan.accent}59` : undefined,
-      }}
+    <div
+      className={cn("group relative h-full", isP1 && "md:-mt-12")}
+      style={{ ["--accent" as string]: plan.accent }}
     >
+      {/* accent bloom — sits outside the card's clipped bounds */}
+      <div
+        aria-hidden
+        className={cn(
+          "pointer-events-none absolute -inset-1 z-0 blur-2xl transition-opacity duration-300",
+          isP1 ? "opacity-40 group-hover:opacity-70" : "opacity-0 group-hover:opacity-50",
+        )}
+        style={{ background: plan.accent }}
+      />
+      <GlassCard
+        cut
+        className={cn(
+          "relative z-10 flex h-full flex-col overflow-hidden p-8 transition-transform duration-300 group-hover:-translate-y-1.5",
+          "shadow-[0_0_0_0_transparent] group-hover:shadow-[0_0_44px_-6px_var(--accent)]",
+          isP1 && "shadow-[0_0_28px_-4px_var(--accent)] md:pb-20",
+        )}
+        style={{ borderColor: plan.accent }}
+      >
       {isP1 && <HalftoneField tint={plan.accent} />}
       <span
         aria-hidden
@@ -43,9 +54,9 @@ function PodiumCard({ plan }: { plan: Plan }) {
 
         <div className="mt-6 flex items-baseline gap-2">
           <span className="font-mono text-[40px] leading-none text-text-primary">
-            {formatPeso(plan.price)}
+            {formatPrice(plan.price)}
           </span>
-          <span className="text-[14px] text-text-secondary">pesos</span>
+          <span className="text-[14px] text-text-secondary">PHP</span>
         </div>
         <p className="mono-label mt-2 text-[11px] text-text-secondary">
           One-time payment
@@ -76,7 +87,8 @@ function PodiumCard({ plan }: { plan: Plan }) {
       >
         Join {plan.name}
       </CheckoutButton>
-    </GlassCard>
+      </GlassCard>
+    </div>
   );
 }
 

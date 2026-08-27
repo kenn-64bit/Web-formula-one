@@ -94,8 +94,8 @@ export const LEADERBOARD: { feature: string; tiers: Record<TierId, boolean> }[] 
   { feature: "Direct strategist line", tiers: { rookie: false, podium: false, constructor: true } },
 ];
 
-/** e.g. 1000 -> "1,000" */
-export function formatPeso(amount: number): string {
+/** e.g. 1000 -> "1,000" (PHP) */
+export function formatPrice(amount: number): string {
   return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(
     amount,
   );
