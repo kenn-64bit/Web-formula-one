@@ -23,8 +23,10 @@ function PodiumCard({ plan }: { plan: Plan }) {
       <div
         aria-hidden
         className={cn(
-          "pointer-events-none absolute -inset-1 z-0 blur-2xl transition-opacity duration-300",
-          isP1 ? "opacity-40 group-hover:opacity-70" : "opacity-0 group-hover:opacity-50",
+          "pointer-events-none absolute -inset-1 z-0 blur-xl transition-opacity duration-300",
+          isP1
+            ? "opacity-15 group-hover:opacity-25"
+            : "opacity-0 group-hover:opacity-20",
         )}
         style={{ background: plan.accent }}
       />
@@ -32,8 +34,8 @@ function PodiumCard({ plan }: { plan: Plan }) {
         cut
         className={cn(
           "relative z-10 flex h-full flex-col overflow-hidden p-8 transition-transform duration-300 group-hover:-translate-y-1.5",
-          "shadow-[0_0_0_0_transparent] group-hover:shadow-[0_0_44px_-6px_var(--accent)]",
-          isP1 && "shadow-[0_0_28px_-4px_var(--accent)] md:pb-20",
+          "shadow-[0_0_0_0_transparent] group-hover:shadow-[0_0_22px_-10px_var(--accent)]",
+          isP1 && "shadow-[0_0_14px_-8px_var(--accent)] md:pb-20",
         )}
         style={{ borderColor: plan.accent }}
       >
