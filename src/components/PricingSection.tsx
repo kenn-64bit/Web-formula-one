@@ -81,8 +81,11 @@ export function PricingSection() {
   return (
     <>
       {/* PODIUM */}
-      <section id="pricing" className="mx-auto max-w-canvas px-5 md:px-20">
-        <h2 className="display-skew mb-12 text-center text-[clamp(32px,7vw,48px)] text-text-primary">
+      <section
+        id="pricing"
+        className="mx-auto max-w-canvas px-5 pt-20 md:px-20 md:pt-28"
+      >
+        <h2 className="display-skew mb-12 text-center text-[clamp(24px,4vw,34px)] text-text-primary">
           Choose Your Chassis
         </h2>
         <div className="grid items-end gap-6 md:grid-cols-3">
