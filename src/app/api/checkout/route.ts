@@ -39,10 +39,10 @@ export async function POST(req: Request) {
     const invoice = await xendit.Invoice.createInvoice({
       data: {
         externalId,
-        amount: plan.priceIDR,
-        currency: "IDR",
+        amount: plan.price,
+        currency: "PHP",
         payerEmail: user.email ?? undefined,
-        description: `APEX Signals — ${plan.name} (30 days)`,
+        description: `APEX Signals — ${plan.name} (one-time access)`,
         successRedirectUrl: `${siteUrl}/?paid=1`,
         failureRedirectUrl: `${siteUrl}/?failed=1`,
         invoiceDuration: 3600,

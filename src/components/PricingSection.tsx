@@ -7,7 +7,7 @@ import {
   PLANS,
   PLAN_LIST,
   LEADERBOARD,
-  formatIDR,
+  formatPeso,
   type Plan,
 } from "@/lib/plans";
 import { cn } from "@/lib/cn";
@@ -18,7 +18,7 @@ function PodiumCard({ plan }: { plan: Plan }) {
     <GlassCard
       cut
       className={cn(
-        "relative flex flex-col overflow-hidden p-8",
+        "relative flex h-full flex-col overflow-hidden p-8",
         isP1 && "md:-mt-12 md:pb-20",
       )}
       style={{
@@ -34,7 +34,7 @@ function PodiumCard({ plan }: { plan: Plan }) {
         {plan.position}
       </span>
 
-      <div className="relative">
+      <div className="relative flex flex-1 flex-col">
         {isP1 && <Pill accent={plan.accent}>Pole Position</Pill>}
         <h3 className="mt-3 font-display text-[22px] font-bold uppercase tracking-tight text-text-primary">
           {plan.name}
@@ -42,11 +42,14 @@ function PodiumCard({ plan }: { plan: Plan }) {
         <p className="mt-1 text-[14px] text-text-secondary">{plan.tagline}</p>
 
         <div className="mt-6 flex items-baseline gap-2">
-          <span className="font-mono text-[56px] leading-none text-text-primary">
-            {formatIDR(plan.priceIDR).replace("Rp", "Rp ")}
+          <span className="font-mono text-[40px] leading-none text-text-primary">
+            {formatPeso(plan.price)}
           </span>
-          <span className="text-[14px] text-text-secondary">/mo</span>
+          <span className="text-[14px] text-text-secondary">pesos</span>
         </div>
+        <p className="mono-label mt-2 text-[11px] text-text-secondary">
+          One-time payment
+        </p>
 
         <div className="my-6 h-px w-full bg-panel-border" />
 
@@ -88,7 +91,7 @@ export function PricingSection() {
         <h2 className="display-skew mb-12 text-center text-[clamp(24px,4vw,34px)] text-text-primary">
           Choose Your Chassis
         </h2>
-        <div className="grid items-end gap-6 md:grid-cols-3">
+        <div className="grid items-stretch gap-6 md:grid-cols-3">
           <PodiumCard plan={PLANS.rookie} />
           <PodiumCard plan={PLANS.podium} />
           <PodiumCard plan={PLANS.constructor} />

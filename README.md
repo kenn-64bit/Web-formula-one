@@ -85,8 +85,11 @@ non-functional until real credentials are filled in.
 
 ## Notes
 
-- **Billing model**: fixed 30-day access per paid invoice, manual renewal. Extends
-  from `max(now, current_period_end)` so early renewals stack.
+- **Billing model**: the cards are presented as a one-time payment in Philippine
+  pesos (₱1,000 / ₱2,500 / ₱3,000 — `src/lib/plans.ts`). The backend still grants a
+  fixed access window (`durationDays: 30`) that the cron sweep expires and kicks —
+  so "one-time" is currently copy only. Drop the cron + `durationDays` if access
+  should truly be permanent.
 - **Single page, no auth UI**: the whole site is one landing page (`/`) — hero,
   features, podium pricing, spec-sheet table. There is no login/account screen yet;
   the Supabase auth infra (`src/proxy.ts`, `src/lib/supabase/*`,

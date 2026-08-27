@@ -6,7 +6,8 @@ export type Plan = {
   position: 1 | 2 | 3;
   name: string;
   tagline: string;
-  priceIDR: number;
+  /** one-time payment amount in Philippine pesos */
+  price: number;
   accent: string;
   accentName: "cyan" | "red" | "papaya";
   durationDays: number;
@@ -29,7 +30,7 @@ export const PLANS: Record<TierId, Plan> = {
     position: 2,
     name: "Rookie",
     tagline: "Get on the grid",
-    priceIDR: 149_000,
+    price: 1_000,
     accent: ACCENTS.red,
     accentName: "red",
     durationDays: 30,
@@ -45,7 +46,7 @@ export const PLANS: Record<TierId, Plan> = {
     position: 1,
     name: "Podium",
     tagline: "Pole position",
-    priceIDR: 349_000,
+    price: 2_500,
     accent: ACCENTS.cyan,
     accentName: "cyan",
     durationDays: 30,
@@ -62,7 +63,7 @@ export const PLANS: Record<TierId, Plan> = {
     position: 3,
     name: "Constructor",
     tagline: "Run the whole garage",
-    priceIDR: 899_000,
+    price: 3_000,
     accent: ACCENTS.papaya,
     accentName: "papaya",
     durationDays: 30,
@@ -93,10 +94,9 @@ export const LEADERBOARD: { feature: string; tiers: Record<TierId, boolean> }[] 
   { feature: "Direct strategist line", tiers: { rookie: false, podium: false, constructor: true } },
 ];
 
-export function formatIDR(amount: number): string {
-  return new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    maximumFractionDigits: 0,
-  }).format(amount);
+/** e.g. 1000 -> "1,000" */
+export function formatPeso(amount: number): string {
+  return new Intl.NumberFormat("en-US", { maximumFractionDigits: 0 }).format(
+    amount,
+  );
 }
