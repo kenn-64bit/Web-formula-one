@@ -2,7 +2,7 @@ import Link from "next/link";
 import { CheckeredDivider } from "@/components/ui/CheckeredDivider";
 
 const COLUMNS: { title: string; links: string[] }[] = [
-  { title: "Product", links: ["Home", "Pricing", "Spec Sheet", "Changelog"] },
+  { title: "Product", links: ["Home", "Spec Sheet", "Changelog"] },
   { title: "Company", links: ["About", "Careers", "Press", "Contact"] },
   { title: "Resources", links: ["Docs", "Signal Log", "Status", "API"] },
   { title: "Legal", links: ["Terms", "Privacy", "Risk Notice", "Refunds"] },
