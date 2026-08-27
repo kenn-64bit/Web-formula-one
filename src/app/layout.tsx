@@ -21,7 +21,7 @@ const ibmPlexMono = IBM_Plex_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "APEX — VIP Racing Signals",
+  title: "Basic FX — VIP Racing Signals",
   description:
     "Subscription racing-signal intelligence, delivered pit-wall fast. Start your engines.",
 };

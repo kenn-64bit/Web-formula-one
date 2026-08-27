@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CheckeredDivider } from "@/components/ui/CheckeredDivider";
@@ -14,22 +16,75 @@ const NAV = [
 
 export function Header() {
   const pathname = usePathname();
+  const [activeHash, setActiveHash] = useState<string | null>(null);
+
+  // scroll-spy: highlight the nav anchor whose section is in view
+  useEffect(() => {
+    if (pathname !== "/") {
+      setActiveHash(null);
+      return;
+    }
+
+    const ids = NAV.map((i) => i.href.split("#")[1]).filter(Boolean) as string[];
+    const getSections = () =>
+      ids
+        .map((id) => document.getElementById(id))
+        .filter((el): el is HTMLElement => el !== null);
+
+    // active = the last tracked section whose start has scrolled past the
+    // header line; nothing past it yet → no hash (Home stays lit)
+    const compute = () => {
+      const line = 120; // px below viewport top
+      let current: string | null = null;
+      for (const el of getSections()) {
+        if (el.getBoundingClientRect().top <= line) current = `#${el.id}`;
+      }
+      setActiveHash(current);
+    };
+
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(compute);
+    };
+
+    compute();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, [pathname]);
 
   return (
     <header className="sticky top-0 z-50">
       <div className="border-b border-panel-border bg-panel backdrop-blur-[24px]">
-        <div className="mx-auto flex h-14 max-w-canvas items-center justify-between px-5 md:px-20">
+        <div className="mx-auto flex h-16 max-w-canvas items-center justify-between px-5 md:px-20">
           <Link
             href="/"
-            className="font-display text-lg font-bold uppercase tracking-tight text-text-primary"
+            className="flex items-center gap-2.5 font-display text-lg font-bold uppercase tracking-tight text-text-primary"
           >
-            APEX<span className="text-cyan">/</span>SIGNALS
+            <Image
+              src="/logo.png"
+              alt="Basic FX"
+              width={40}
+              height={60}
+              priority
+              className="h-12 w-auto"
+            />
+            Basic FX
           </Link>
 
           <nav className="hidden items-center gap-7 md:flex">
             {NAV.map((item) => {
-              // anchor items (containing "#") never take a persistent underline
-              const active = !item.href.includes("#") && pathname === item.href;
+              const hash = item.href.includes("#")
+                ? `#${item.href.split("#")[1]}`
+                : null;
+              const active = hash
+                ? pathname === "/" && activeHash === hash
+                : pathname === item.href && !activeHash;
               return (
                 <Link
                   key={item.label}

@@ -12,7 +12,7 @@ import {
 import { ACCENTS } from "@/lib/plans";
 
 export const metadata: Metadata = {
-  title: "APEX Signals — VIP Racing Signals",
+  title: "Basic FX — VIP Racing Signals",
 };
 
 const FEATURES = [

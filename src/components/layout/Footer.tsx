@@ -12,8 +12,19 @@ export function Footer() {
   return (
     <footer className="mt-auto">
       <CheckeredDivider />
-      <div className="bg-[#0c0f16]">
-        <div className="mx-auto max-w-canvas px-5 py-16 md:px-20">
+      <div className="relative isolate overflow-hidden bg-[#0c0f16]">
+        {/* ASCII "creation" backdrop */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat opacity-[0.18] mix-blend-screen"
+          style={{ backgroundImage: "url(/footer-hands.jpg)" }}
+        />
+        {/* vignette on top of the backdrop */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 -z-10 [background:radial-gradient(ellipse_at_center,transparent_35%,rgba(12,15,22,0.85)_100%)]"
+        />
+        <div className="relative mx-auto max-w-canvas px-5 py-16 md:px-20">
           <div className="flex flex-wrap items-center gap-x-10 gap-y-4 opacity-60">
             {["SCUDERIA", "MONZA", "APEX-DYN", "TIFOSI", "PIT-24", "DRS-LINE"].map(
               (mark) => (
@@ -50,7 +61,7 @@ export function Footer() {
           </div>
 
           <p className="mono-label mt-12 text-[11px] text-text-secondary">
-            © {new Date().getFullYear()} APEX SIGNALS — ALL TELEMETRY RESERVED. NOT
+            © {new Date().getFullYear()} BASIC FX — ALL TELEMETRY RESERVED. NOT
             FINANCIAL ADVICE.
           </p>
         </div>
