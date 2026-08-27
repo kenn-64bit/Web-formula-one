@@ -44,7 +44,7 @@ export async function POST(req: Request) {
         payerEmail: user.email ?? undefined,
         description: `APEX Signals — ${plan.name} (30 days)`,
         successRedirectUrl: `${siteUrl}/?paid=1`,
-        failureRedirectUrl: `${siteUrl}/pricing?failed=1`,
+        failureRedirectUrl: `${siteUrl}/?failed=1`,
         invoiceDuration: 3600,
       },
     });

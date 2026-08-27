@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { HalftoneField } from "@/components/ui/HalftoneField";
 import { FeatureBadge, Pill } from "@/components/ui/Badge";
@@ -12,10 +11,6 @@ import {
   type Plan,
 } from "@/lib/plans";
 import { cn } from "@/lib/cn";
-
-export const metadata: Metadata = {
-  title: "Choose your chassis — APEX Signals",
-};
 
 function PodiumCard({ plan }: { plan: Plan }) {
   const isP1 = plan.position === 1;
@@ -57,7 +52,10 @@ function PodiumCard({ plan }: { plan: Plan }) {
 
         <ul className="space-y-3">
           {plan.features.map((f) => (
-            <li key={f} className="flex items-start gap-3 text-[14px] text-text-primary">
+            <li
+              key={f}
+              className="flex items-start gap-3 text-[14px] text-text-primary"
+            >
               <span className="mt-1 shrink-0" style={{ color: plan.accent }}>
                 <FlagGlyph />
               </span>
@@ -79,18 +77,15 @@ function PodiumCard({ plan }: { plan: Plan }) {
   );
 }
 
-export default function PricingPage() {
+export function PricingSection() {
   return (
     <>
-      <section className="flex h-[320px] items-center justify-center px-5">
-        <h1 className="display-skew text-[clamp(32px,7vw,48px)] text-text-primary">
+      {/* PODIUM */}
+      <section id="pricing" className="mx-auto max-w-canvas px-5 md:px-20">
+        <h2 className="display-skew mb-12 text-center text-[clamp(32px,7vw,48px)] text-text-primary">
           Choose Your Chassis
-        </h1>
-      </section>
-
-      <section className="mx-auto max-w-canvas px-5 md:px-20">
+        </h2>
         <div className="grid items-end gap-6 md:grid-cols-3">
-          {/* order flanking cards around the centre */}
           <PodiumCard plan={PLANS.rookie} />
           <PodiumCard plan={PLANS.podium} />
           <PodiumCard plan={PLANS.constructor} />

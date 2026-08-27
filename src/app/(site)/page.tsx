@@ -1,12 +1,18 @@
+import type { Metadata } from "next";
 import { CutButton } from "@/components/ui/CutButton";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { HalftoneField } from "@/components/ui/HalftoneField";
+import { PricingSection } from "@/components/PricingSection";
 import {
   SteeringWheelIcon,
   StopwatchIcon,
   CheckeredFlagIcon,
 } from "@/components/icons";
 import { ACCENTS } from "@/lib/plans";
+
+export const metadata: Metadata = {
+  title: "APEX Signals — VIP Racing Signals",
+};
 
 const FEATURES = [
   {
@@ -52,8 +58,8 @@ export default function HomePage() {
             Telegram channel and race with the strategists.
           </p>
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-            <CutButton href="/pricing">Join VIP</CutButton>
-            <CutButton href="/pricing#leaderboard" variant="ghost">
+            <CutButton href="/#pricing">Join VIP</CutButton>
+            <CutButton href="/#leaderboard" variant="ghost">
               View the spec sheet
             </CutButton>
           </div>
@@ -79,6 +85,9 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* PRICING + SPEC SHEET */}
+      <PricingSection />
     </>
   );
 }

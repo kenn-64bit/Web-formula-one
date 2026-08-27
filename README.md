@@ -42,8 +42,8 @@ Pricing "Join VIP"  →  /api/checkout (Xendit invoice)  →  hosted checkout
 ## Debugging the frontend (no real keys)
 
 `.env.local` ships with placeholder values so `npm run dev` runs out of the box.
-Home, Pricing, and Login render for design work; `/api/*` routes and the magic-link
-send stay non-functional until real credentials are filled in.
+The single landing page (`/`) renders for design work; `/api/*` routes stay
+non-functional until real credentials are filled in.
 
 ## Key files
 
@@ -51,7 +51,7 @@ send stay non-functional until real credentials are filled in.
 | --- | --- |
 | Design tokens / motifs | `src/app/globals.css` |
 | UI primitives | `src/components/ui/*` (`GlassCard`, `CutButton`, `RpmBar`, `HalftoneField`, `Badge`, `CheckeredDivider`) |
-| Pages | `src/app/(site)/page.tsx`, `.../pricing/page.tsx`, `.../login/page.tsx` |
+| Page (single) | `src/app/(site)/page.tsx` + `src/components/PricingSection.tsx` |
 | Plans / feature matrix | `src/lib/plans.ts` |
 | Checkout | `src/app/api/checkout/route.ts` |
 | Webhook | `src/app/api/webhooks/xendit/route.ts` |
@@ -62,8 +62,10 @@ send stay non-functional until real credentials are filled in.
 
 ## Testing the pipeline
 
-- **Checkout**: sign in, click a tier on `/pricing` → redirected to a real Xendit
-  (test-mode) invoice page.
+- **Checkout**: `/api/checkout` still requires an authenticated Supabase user, so
+  the plan buttons show "Sign-in required" until the accounts area is rebuilt. Test
+  the invoice call directly by POSTing `{ "tier": "podium" }` with a valid session
+  cookie.
 - **Webhook** (simulate a paid invoice):
   ```bash
   curl -X POST http://localhost:3000/api/webhooks/xendit \
@@ -85,8 +87,10 @@ send stay non-functional until real credentials are filled in.
 
 - **Billing model**: fixed 30-day access per paid invoice, manual renewal. Extends
   from `max(now, current_period_end)` so early renewals stack.
-- **No dashboard**: the app is Home + Pricing + Login only. The subscription state
-  lives in Supabase; there is no logged-in telemetry screen.
+- **Single page, no auth UI**: the whole site is one landing page (`/`) — hero,
+  features, podium pricing, spec-sheet table. There is no login/account screen yet;
+  the Supabase auth infra (`src/proxy.ts`, `src/lib/supabase/*`,
+  `src/app/auth/callback`) stays in place for a future accounts area.
 - **Invite-link delivery**: the webhook generates the single-use link and stores it
   on the `subscriptions` row. Automatic delivery needs `telegram_user_id`, which
   requires a `/start <token>` deep-link linking flow (not built). Until then, read

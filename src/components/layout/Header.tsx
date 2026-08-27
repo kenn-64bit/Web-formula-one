@@ -8,8 +8,7 @@ import { cn } from "@/lib/cn";
 
 const NAV = [
   { href: "/", label: "Home" },
-  { href: "/pricing", label: "Spec Sheet" },
-  { href: "/login", label: "Paddock" },
+  { href: "/#leaderboard", label: "Spec Sheet" },
 ];
 
 export function Header() {
@@ -28,10 +27,8 @@ export function Header() {
 
           <nav className="hidden items-center gap-8 md:flex">
             {NAV.map((item) => {
-              const active =
-                item.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(item.href.split("#")[0]);
+              // anchor items (containing "#") never take a persistent underline
+              const active = !item.href.includes("#") && pathname === item.href;
               return (
                 <Link
                   key={item.label}
@@ -49,7 +46,7 @@ export function Header() {
             })}
           </nav>
 
-          <CutButton href="/pricing" className="hidden sm:inline-flex">
+          <CutButton href="/#pricing" className="hidden sm:inline-flex">
             Enter Pit Lane
           </CutButton>
         </div>

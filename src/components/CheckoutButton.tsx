@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { CutButton } from "@/components/ui/CutButton";
 import type { TierId } from "@/lib/plans";
 
@@ -18,7 +17,6 @@ export function CheckoutButton({
   children: React.ReactNode;
   className?: string;
 }) {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -33,7 +31,8 @@ export function CheckoutButton({
       });
       const data = (await res.json()) as { invoiceUrl?: string; error?: string };
       if (res.status === 401) {
-        router.push("/login?next=/pricing");
+        setError("Sign-in required — accounts are coming soon.");
+        setLoading(false);
         return;
       }
       if (!res.ok || !data.invoiceUrl) {
