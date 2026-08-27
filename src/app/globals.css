@@ -95,3 +95,49 @@ body {
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
+
+/* Always-on CSS grid floor behind the hero (shows even if WebGL fails) */
+.hero-css-grid {
+  background-color: #0b0e17;
+  background-image:
+    linear-gradient(rgba(0, 245, 212, 0.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 212, 0.14) 1px, transparent 1px),
+    linear-gradient(rgba(0, 245, 212, 0.35) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 245, 212, 0.35) 1px, transparent 1px);
+  background-size:
+    44px 44px,
+    44px 44px,
+    176px 176px,
+    176px 176px;
+  background-position: center;
+  animation: hero-grid-pan 16s linear infinite;
+  -webkit-mask-image: radial-gradient(
+    120% 90% at 50% 45%,
+    black 35%,
+    transparent 85%
+  );
+  mask-image: radial-gradient(120% 90% at 50% 45%, black 35%, transparent 85%);
+}
+
+@keyframes hero-grid-pan {
+  from {
+    background-position:
+      0 0,
+      0 0,
+      0 0,
+      0 0;
+  }
+  to {
+    background-position:
+      0 440px,
+      440px 0,
+      0 440px,
+      440px 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-css-grid {
+    animation: none;
+  }
+}
