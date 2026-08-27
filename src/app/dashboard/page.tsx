@@ -7,7 +7,12 @@ import { RpmBar } from "@/components/ui/RpmBar";
 import { CutButton } from "@/components/ui/CutButton";
 import { CopyLink } from "@/components/CopyLink";
 import { PLANS, type TierId } from "@/lib/plans";
-import { daysRemaining, type SubscriptionRow } from "@/lib/subscription";
+import {
+  daysRemaining,
+  MOCK_SUBSCRIPTION,
+  type SubscriptionRow,
+} from "@/lib/subscription";
+import { PREVIEW_MODE } from "@/lib/preview";
 
 export const metadata: Metadata = { title: "Pit Wall — APEX Signals" };
 
@@ -35,20 +40,26 @@ function Widget({
 }
 
 export default async function DashboardPage() {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  let sub: SubscriptionRow | null;
 
-  if (!user) redirect("/login?next=/dashboard");
+  if (PREVIEW_MODE) {
+    sub = MOCK_SUBSCRIPTION;
+  } else {
+    const supabase = await createSupabaseServerClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  const { data } = await supabase
-    .from("subscriptions")
-    .select("*")
-    .eq("user_id", user.id)
-    .maybeSingle();
+    if (!user) redirect("/login?next=/dashboard");
 
-  const sub = data as SubscriptionRow | null;
+    const { data } = await supabase
+      .from("subscriptions")
+      .select("*")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    sub = data as SubscriptionRow | null;
+  }
 
   const tier: TierId = sub?.tier ?? "podium";
   const plan = PLANS[tier];

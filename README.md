@@ -38,6 +38,21 @@ Pricing "Join VIP"  →  /api/checkout (Xendit invoice)  →  hosted checkout
    token and the numeric chat id in env.
 7. **Run**: `npm run dev`
 
+## Debugging the frontend (no real keys)
+
+`.env.local` ships with placeholder values and `NEXT_PUBLIC_PREVIEW_MODE=1`, so
+`npm run dev` runs out of the box. In preview mode:
+
+- **Home / Pricing** render normally.
+- **Dashboard** skips Supabase auth and renders with `MOCK_SUBSCRIPTION`
+  (`src/lib/subscription.ts`) — active Podium plan, ~18 days left, usage 92/100 so
+  the RPM bar shows its redline.
+- **Login** renders; the magic-link send needs real Supabase keys.
+- `/api/*` routes stay non-functional (they need real credentials).
+
+Preview mode is gated to non-production builds (`src/lib/preview.ts`). To go live,
+fill the real values from `.env.example` and set `NEXT_PUBLIC_PREVIEW_MODE=0`.
+
 ## Key files
 
 | Area | Path |
