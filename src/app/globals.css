@@ -1,26 +1,97 @@
 @import "tailwindcss";
 
+@theme {
+  --color-ink-900: #0b0e17;
+  --color-ink-800: #161b26;
+  --color-panel: rgba(255, 255, 255, 0.06);
+  --color-panel-border: rgba(255, 255, 255, 0.14);
+
+  --color-cyan: #00f5d4;
+  --color-red: #ff1801;
+  --color-papaya: #ff8000;
+
+  --color-text-primary: #f5f7fa;
+  --color-text-secondary: #8b93a7;
+
+  --font-display: var(--font-rajdhani), "Rajdhani", system-ui, sans-serif;
+  --font-body: var(--font-space-grotesk), "Space Grotesk", system-ui, sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
+
+  --breakpoint-canvas: 1440px;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  min-height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(600px circle at 50% 12%, rgba(0, 245, 212, 0.08), transparent 70%),
+    linear-gradient(160deg, var(--color-ink-900) 0%, var(--color-ink-800) 100%);
+  background-attachment: fixed;
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- F1 visual motifs -------------------------------------------------- */
+
+/* Diagonal corner cut: bottom-right 16px */
+.cut-br {
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - 16px),
+    calc(100% - 16px) 100%,
+    0 100%
+  );
+}
+
+/* Checkered divider: 8px tall, 8x8 squares, white 8% / transparent */
+.checker-divider {
+  height: 8px;
+  width: 100%;
+  background-image:
+    linear-gradient(45deg, rgba(255, 255, 255, 0.08) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.08) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.08) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.08) 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0px;
+}
+
+/* Halftone dot-matrix: 2px dots on 8px pitch, radial fade 0.25 -> 0 */
+.halftone {
+  background-image: radial-gradient(
+    currentColor 1px,
+    transparent 1.4px
+  );
+  background-size: 8px 8px;
+  -webkit-mask-image: radial-gradient(closest-side, black, transparent);
+  mask-image: radial-gradient(closest-side, black, transparent);
+  opacity: 0.25;
+}
+
+.display-skew {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  transform: skewX(-2deg);
+}
+
+.text-glow-cyan {
+  text-shadow: 0 0 24px rgba(0, 245, 212, 0.45);
+}
+
+.mono-label {
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
 }

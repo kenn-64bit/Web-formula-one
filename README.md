@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# APEX Signals — F1-Broadcast SaaS + VIP Telegram Pipeline
 
-## Getting Started
+Next.js (App Router) subscription site art-directed as a Formula 1 broadcast package,
+with a full payment → access pipeline:
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+Pricing "Join VIP"  →  /api/checkout (Xendit invoice)  →  hosted checkout
+        →  Xendit webhook /api/webhooks/xendit  →  Supabase subscription = active (+30d)
+        →  Telegram single-use invite link  →  shown on /dashboard
+        →  hourly Vercel Cron /api/cron/expire  →  expired users kicked from VIP channel
+        →  renewal re-runs the webhook path with a fresh link
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Next.js 16 App Router, TypeScript, Tailwind CSS v4
+- Supabase (Postgres + Auth, email magic-link)
+- Xendit (Invoice API + webhook, verified via `x-callback-token`)
+- Telegraf (bot: `createChatInviteLink`, `banChatMember` + `unbanChatMember`)
+- Vercel Cron for the expiration sweep
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Setup
 
-## Learn More
+1. **Install**: `npm install`
+2. **Env**: `cp .env.example .env.local` and fill every value. See comments in
+   `.env.example` for where each key comes from.
+3. **Database**: run `supabase/migrations/0001_init.sql` in the Supabase SQL editor.
+   Creates `subscriptions` + `payments`, RLS (users read only their own row), an
+   `updated_at` trigger, and a trigger that provisions an empty `subscriptions`
+   row on signup.
+4. **Supabase Auth**: enable Email provider. Add `http://localhost:3000/auth/callback`
+   (and the prod equivalent) to the allowed redirect URLs.
+5. **Xendit**: create an "Invoice paid" webhook pointing at
+   `https://<host>/api/webhooks/xendit`; copy the verification token into
+   `XENDIT_CALLBACK_TOKEN`.
+6. **Telegram**: create a bot with @BotFather, add it as an **admin** of the VIP
+   channel/group with "invite users via link" + "ban users" rights. Put the bot
+   token and the numeric chat id in env.
+7. **Run**: `npm run dev`
 
-To learn more about Next.js, take a look at the following resources:
+## Key files
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Area | Path |
+| --- | --- |
+| Design tokens / motifs | `src/app/globals.css` |
+| UI primitives | `src/components/ui/*` (`GlassCard`, `CutButton`, `RpmBar`, `HalftoneField`, `Badge`, `CheckeredDivider`) |
+| Pages | `src/app/(site)/page.tsx`, `.../pricing/page.tsx`, `.../login/page.tsx`, `src/app/dashboard/*` |
+| Plans / feature matrix | `src/lib/plans.ts` |
+| Checkout | `src/app/api/checkout/route.ts` |
+| Webhook | `src/app/api/webhooks/xendit/route.ts` |
+| Expiration cron | `src/app/api/cron/expire/route.ts` + `vercel.json` |
+| Telegram wrapper | `src/lib/telegram.ts` |
+| Period math / idempotency helpers | `src/lib/subscription.ts` |
+| Session refresh | `src/proxy.ts` |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Testing the pipeline
 
-## Deploy on Vercel
+- **Checkout**: sign in, click a tier on `/pricing` → redirected to a real Xendit
+  (test-mode) invoice page.
+- **Webhook** (simulate a paid invoice):
+  ```bash
+  curl -X POST http://localhost:3000/api/webhooks/xendit \
+    -H "x-callback-token: $XENDIT_CALLBACK_TOKEN" \
+    -H "content-type: application/json" \
+    -d '{"id":"inv_test_1","external_id":"<USER_UUID>:podium:1","status":"PAID","amount":349000}'
+  ```
+  → `subscriptions.status = active`, `current_period_end ≈ now + 30d`,
+  `invite_link` populated, a `payments` row written. Re-send the same body →
+  `{ deduped: true }`, no double extension.
+- **Cron**:
+  ```bash
+  curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/expire
+  ```
+  Set a row's `current_period_end` to the past first → it flips to `expired`,
+  `invite_link` cleared, and (if `telegram_user_id` is set) the member is kicked.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Notes
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Billing model**: fixed 30-day access per paid invoice, manual renewal. Extends
+  from `max(now, current_period_end)` so early renewals stack.
+- **Usage metric** (`usage_count` / `usage_limit`) is a placeholder wired to the
+  RPM bar so the >90% redline is demonstrable; point it at a real counter later.
+- **Telegram auto-DM** needs `telegram_user_id`, which requires a `/start <token>`
+  deep-link linking flow (not built). Until then the dashboard always shows the
+  invite link and the cron kick is skipped for unlinked users.
