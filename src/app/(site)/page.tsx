@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { CutButton } from "@/components/ui/CutButton";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { HalftoneField } from "@/components/ui/HalftoneField";
+import { HowItWorks } from "@/components/HowItWorks";
 import { PricingSection } from "@/components/PricingSection";
 import {
   SteeringWheelIcon,
@@ -85,6 +86,9 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      {/* BRIDGE — starting procedure */}
+      <HowItWorks />
 
       {/* PRICING + SPEC SHEET */}
       <PricingSection />
