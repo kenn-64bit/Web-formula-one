@@ -61,7 +61,7 @@ function PodiumCard({ plan }: { plan: Plan }) {
           <span className="text-[14px] text-text-secondary">PHP</span>
         </div>
         <p className="mono-label mt-2 text-[11px] text-text-secondary">
-          One-time payment
+          One-time &middot; lifetime access
         </p>
 
         <div className="my-6 h-px w-full bg-panel-border" />

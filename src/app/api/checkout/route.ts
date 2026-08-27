@@ -1,22 +1,14 @@
 import { NextResponse } from "next/server";
+import { randomUUID } from "node:crypto";
 import { Xendit } from "xendit-node";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { env, siteUrl } from "@/lib/env";
 import { PLANS, isTierId } from "@/lib/plans";
+import { isValidEmail } from "@/lib/subscription";
 
 export const runtime = "nodejs";
 
 export async function POST(req: Request) {
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
-  }
-
   let body: unknown;
   try {
     body = await req.json();
@@ -24,13 +16,19 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const tier = (body as { tier?: string }).tier;
+  const { tier, email: rawEmail } = (body ?? {}) as {
+    tier?: string;
+    email?: string;
+  };
   if (!tier || !isTierId(tier)) {
     return NextResponse.json({ error: "Unknown tier" }, { status: 400 });
   }
+  if (!isValidEmail(rawEmail)) {
+    return NextResponse.json({ error: "Enter a valid email" }, { status: 400 });
+  }
+  const email = rawEmail.trim().toLowerCase();
   const plan = PLANS[tier];
-
-  const externalId = `${user.id}:${tier}:${Date.now()}`;
+  const externalId = randomUUID();
 
   let invoiceUrl: string;
   let invoiceId: string;
@@ -41,9 +39,9 @@ export async function POST(req: Request) {
         externalId,
         amount: plan.price,
         currency: "PHP",
-        payerEmail: user.email ?? undefined,
-        description: `APEX Signals — ${plan.name} (one-time access)`,
-        successRedirectUrl: `${siteUrl}/?paid=1`,
+        payerEmail: email,
+        description: `APEX Signals — ${plan.name} (one-time, lifetime access)`,
+        successRedirectUrl: `${siteUrl}/success?ref=${externalId}`,
         failureRedirectUrl: `${siteUrl}/?failed=1`,
         invoiceDuration: 3600,
       },
@@ -61,17 +59,19 @@ export async function POST(req: Request) {
     );
   }
 
-  // Record the pending intent (RLS-bypassing admin write).
   const admin = createSupabaseAdminClient();
-  await admin.from("subscriptions").upsert(
-    {
-      user_id: user.id,
-      tier,
-      xendit_invoice_id: invoiceId,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "user_id" },
-  );
+  const { error } = await admin.from("subscriptions").insert({
+    email,
+    tier,
+    status: "pending",
+    xendit_invoice_id: invoiceId,
+    xendit_external_id: externalId,
+    amount: plan.price,
+  });
+  if (error) {
+    console.error("[checkout] pending row insert failed", error);
+    return NextResponse.json({ error: "Could not start checkout" }, { status: 500 });
+  }
 
   return NextResponse.json({ invoiceUrl });
 }

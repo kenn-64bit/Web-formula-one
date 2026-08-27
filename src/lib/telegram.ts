@@ -16,7 +16,7 @@ function chatId(): string | number {
 
 /**
  * Create a single-use invite link to the VIP channel/group.
- * Bot must be an admin with "invite users via link" permission.
+ * The bot must be an admin with "invite users via link" permission.
  */
 export async function issueInviteLink(label: string): Promise<string> {
   const link = await getBot().telegram.createChatInviteLink(chatId(), {
@@ -24,27 +24,4 @@ export async function issueInviteLink(label: string): Promise<string> {
     name: label.slice(0, 32),
   });
   return link.invite_link;
-}
-
-/**
- * Remove a user from the VIP channel without a permanent ban:
- * ban then immediately unban so they can re-join later on renewal.
- */
-export async function kickMember(telegramUserId: number): Promise<void> {
-  const id = chatId();
-  await getBot().telegram.banChatMember(id, telegramUserId);
-  await getBot().telegram.unbanChatMember(id, telegramUserId, {
-    only_if_banned: true,
-  });
-}
-
-/** Best-effort DM of the invite link (only works if the user has /start-ed the bot). */
-export async function sendInvite(
-  telegramUserId: number,
-  link: string,
-): Promise<void> {
-  await getBot().telegram.sendMessage(
-    telegramUserId,
-    `🏁 Your VIP Signals access is live.\n\nSingle-use invite link:\n${link}`,
-  );
 }

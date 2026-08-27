@@ -2,18 +2,18 @@ import { z } from "zod";
 
 /**
  * Server-only environment. Never import this into a client component.
- * Validates lazily so that `next build` doesn't hard-fail when a key is absent
- * in a preview environment — routes that need a key will throw on use instead.
+ * Validates lazily so `next build` doesn't hard-fail when a key is absent in a
+ * preview environment — routes that need a key throw on use instead.
  */
 const schema = z.object({
   NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
   SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
   XENDIT_SECRET_KEY: z.string().min(1),
   XENDIT_CALLBACK_TOKEN: z.string().min(1),
   TELEGRAM_BOT_TOKEN: z.string().min(1),
   TELEGRAM_VIP_CHAT_ID: z.string().min(1),
-  CRON_SECRET: z.string().min(1),
+  RESEND_API_KEY: z.string().min(1),
+  RESEND_FROM: z.string().min(1),
   NEXT_PUBLIC_SITE_URL: z.string().url().default("http://localhost:3000"),
 });
 

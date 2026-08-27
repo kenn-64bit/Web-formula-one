@@ -6,19 +6,19 @@ const STEPS = [
     n: "01",
     accent: ACCENTS.cyan,
     title: "Pick your chassis",
-    body: "Choose the tier that matches your pace. Move up or drop back between cycles with no penalty.",
+    body: "Choose the tier that matches your pace and drop in your email. One payment, no subscription.",
   },
   {
     n: "02",
     accent: ACCENTS.red,
     title: "Clear the pit lane",
-    body: "Checkout runs through Xendit. Your seat is confirmed the moment the payment lands — 30 days on the clock.",
+    body: "Checkout runs through Xendit. The moment payment lands, your VIP access is confirmed — yours for good.",
   },
   {
     n: "03",
     accent: ACCENTS.papaya,
     title: "Join the grid",
-    body: "A single-use invite drops you straight into the VIP Telegram channel, live with the strategists.",
+    body: "A single-use invite link lands in your inbox and on the confirmation page — straight into the VIP Telegram channel.",
   },
 ];
 

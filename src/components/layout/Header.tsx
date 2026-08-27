@@ -9,6 +9,7 @@ import { cn } from "@/lib/cn";
 const NAV = [
   { href: "/", label: "Home" },
   { href: "/#leaderboard", label: "Spec Sheet" },
+  { href: "/status", label: "My Access" },
 ];
 
 export function Header() {

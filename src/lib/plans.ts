@@ -10,7 +10,6 @@ export type Plan = {
   price: number;
   accent: string;
   accentName: "cyan" | "red" | "papaya";
-  durationDays: number;
   features: string[];
 };
 
@@ -33,7 +32,6 @@ export const PLANS: Record<TierId, Plan> = {
     price: 1_000,
     accent: ACCENTS.red,
     accentName: "red",
-    durationDays: 30,
     features: [
       "Daily signal briefing",
       "VIP Telegram channel access",
@@ -49,7 +47,6 @@ export const PLANS: Record<TierId, Plan> = {
     price: 2_500,
     accent: ACCENTS.cyan,
     accentName: "cyan",
-    durationDays: 30,
     features: [
       "Everything in Rookie",
       "Real-time high-conviction calls",
@@ -66,7 +63,6 @@ export const PLANS: Record<TierId, Plan> = {
     price: 3_000,
     accent: ACCENTS.papaya,
     accentName: "papaya",
-    durationDays: 30,
     features: [
       "Everything in Podium",
       "Portfolio review calls",

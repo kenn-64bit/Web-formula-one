@@ -3,9 +3,9 @@ import { timingSafeEqual } from "node:crypto";
 import { z } from "zod";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { env } from "@/lib/env";
-import { PLANS, isTierId } from "@/lib/plans";
-import { extendPeriod, parseExternalId } from "@/lib/subscription";
-import { issueInviteLink, sendInvite } from "@/lib/telegram";
+import { isTierId } from "@/lib/plans";
+import { issueInviteLink } from "@/lib/telegram";
+import { sendInviteEmail } from "@/lib/email";
 
 export const runtime = "nodejs";
 
@@ -37,14 +37,14 @@ export async function POST(req: Request) {
   }
   const evt = parsed.data;
 
-  const paid = evt.status === "PAID" || evt.status === "SETTLED";
-  if (!paid) {
+  if (evt.status !== "PAID" && evt.status !== "SETTLED") {
     return NextResponse.json({ ignored: evt.status });
   }
 
   const admin = createSupabaseAdminClient();
 
-  // Idempotency: unique on invoice_id. Conflict => already processed.
+  // Idempotency: unique on invoice_id. Conflict => already processed (also stops
+  // a duplicate invite email).
   const { error: dupeError } = await admin.from("payments").insert({
     invoice_id: evt.id,
     external_id: evt.external_id,
@@ -61,49 +61,46 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "DB error" }, { status: 500 });
   }
 
-  const ref = parseExternalId(evt.external_id);
-  if (!ref || !isTierId(ref.tier)) {
-    return NextResponse.json({ error: "Unresolvable external_id" }, { status: 422 });
-  }
-  const plan = PLANS[ref.tier];
-
-  const { data: existing } = await admin
+  // The pending row must exist — no blind trust of external_id.
+  const { data: row } = await admin
     .from("subscriptions")
-    .select("current_period_end, telegram_user_id")
-    .eq("user_id", ref.userId)
+    .select("id, email, tier, status")
+    .eq("xendit_external_id", evt.external_id)
     .maybeSingle();
 
-  const newEnd = extendPeriod(
-    existing?.current_period_end ?? null,
-    plan.durationDays,
-  );
+  const tier = row?.tier ?? "";
+  if (!row || !isTierId(tier)) {
+    return NextResponse.json({ error: "Unknown purchase" }, { status: 404 });
+  }
 
-  // Telegram onboarding — failure here must not fail the webhook.
+  // Telegram invite — failure must not fail the webhook.
   let inviteLink: string | null = null;
   try {
-    inviteLink = await issueInviteLink(ref.userId);
-    if (existing?.telegram_user_id && inviteLink) {
-      await sendInvite(existing.telegram_user_id, inviteLink).catch(() => {});
-    }
+    inviteLink = await issueInviteLink(evt.external_id);
   } catch (e) {
     console.error("[xendit] telegram invite failed", e);
   }
 
-  const { error: updateError } = await admin.from("subscriptions").upsert(
-    {
-      user_id: ref.userId,
-      tier: ref.tier,
+  const { error: updateError } = await admin
+    .from("subscriptions")
+    .update({
       status: "active",
-      current_period_end: newEnd.toISOString(),
-      xendit_invoice_id: evt.id,
+      paid_at: evt.paid_at ?? new Date().toISOString(),
+      amount: evt.amount ?? undefined,
       ...(inviteLink ? { invite_link: inviteLink } : {}),
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "user_id" },
-  );
+    })
+    .eq("id", row.id);
   if (updateError) {
-    console.error("[xendit] subscription upsert failed", updateError);
+    console.error("[xendit] subscription update failed", updateError);
     return NextResponse.json({ error: "DB error" }, { status: 500 });
+  }
+
+  if (inviteLink) {
+    try {
+      await sendInviteEmail(row.email, { tier, inviteLink });
+    } catch (e) {
+      console.error("[xendit] invite email failed", e);
+    }
   }
 
   return NextResponse.json({ ok: true });
