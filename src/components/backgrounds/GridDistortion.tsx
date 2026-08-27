@@ -31,17 +31,24 @@ const fragmentShader = /* glsl */ `
 
   void main() {
     vec4 offset = texture2D(uDataTexture, vUv);
-    // slow idle drift so the grid breathes without cursor input
+    // slow idle warp so the grid visibly breathes without cursor input
     vec2 drift = vec2(
-      sin(vUv.y * 6.0 + uTime * 0.15),
-      cos(vUv.x * 6.0 + uTime * 0.12)
-    ) * 0.0025;
+      sin(vUv.y * 7.0 + uTime * 0.35),
+      cos(vUv.x * 7.0 + uTime * 0.30)
+    ) * 0.007;
     vec2 uv = vUv + drift;
     // RGB split: sample each channel with a slightly different displacement
-    float r = texture2D(uTexture, uv - 0.02 * offset.rg).r;
-    float g = texture2D(uTexture, uv - 0.017 * offset.rg).g;
-    float b = texture2D(uTexture, uv - 0.014 * offset.rg).b;
-    gl_FragColor = vec4(r, g, b, 1.0);
+    float r = texture2D(uTexture, uv - 0.05 * offset.rg).r;
+    float g = texture2D(uTexture, uv - 0.042 * offset.rg).g;
+    float b = texture2D(uTexture, uv - 0.034 * offset.rg).b;
+    vec3 col = vec3(r, g, b);
+
+    // telemetry sweep: a soft cyan band scrolling upward
+    float scan = fract(vUv.y * 0.9 - uTime * 0.05);
+    float band = smoothstep(0.0, 0.05, scan) * smoothstep(0.16, 0.05, scan);
+    col += band * vec3(0.0, 0.12, 0.10);
+
+    gl_FragColor = vec4(col, 1.0);
   }
 `;
 
@@ -54,13 +61,18 @@ function paintGrid(canvas: HTMLCanvasElement, w: number, h: number) {
 
   const g = ctx.createLinearGradient(0, 0, w * 0.4, h);
   g.addColorStop(0, "#0B0E17");
-  g.addColorStop(1, "#161B26");
+  g.addColorStop(0.55, "#141A28");
+  g.addColorStop(1, "#0B0E17");
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, w, h);
 
-  const pitch = Math.max(28, Math.round(Math.min(w, h) / 22));
+  const pitch = Math.max(34, Math.round(Math.min(w, h) / 16));
+
+  // minor grid
   ctx.lineWidth = 1;
-  ctx.strokeStyle = "rgba(0, 245, 212, 0.13)";
+  ctx.strokeStyle = "rgba(0, 245, 212, 0.22)";
+  ctx.shadowColor = "rgba(0, 245, 212, 0.5)";
+  ctx.shadowBlur = 6;
   ctx.beginPath();
   for (let x = pitch; x < w; x += pitch) {
     ctx.moveTo(x + 0.5, 0);
@@ -72,24 +84,40 @@ function paintGrid(canvas: HTMLCanvasElement, w: number, h: number) {
   }
   ctx.stroke();
 
-  // brighter horizon line + a couple of accent verticals
-  ctx.strokeStyle = "rgba(0, 245, 212, 0.28)";
+  // major lines every 4th cell
+  ctx.strokeStyle = "rgba(0, 245, 212, 0.4)";
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  for (let x = pitch * 4; x < w; x += pitch * 4) {
+    ctx.moveTo(x + 0.5, 0);
+    ctx.lineTo(x + 0.5, h);
+  }
+  for (let y = pitch * 4; y < h; y += pitch * 4) {
+    ctx.moveTo(0, y + 0.5);
+    ctx.lineTo(w, y + 0.5);
+  }
+  ctx.stroke();
+
+  // bright horizon line
+  ctx.strokeStyle = "rgba(0, 245, 212, 0.65)";
+  ctx.lineWidth = 2;
   ctx.beginPath();
   ctx.moveTo(0, Math.round(h * 0.5) + 0.5);
   ctx.lineTo(w, Math.round(h * 0.5) + 0.5);
   ctx.stroke();
+  ctx.shadowBlur = 0;
 
-  // vignette
+  // gentle edge vignette
   const v = ctx.createRadialGradient(
     w / 2,
     h / 2,
-    Math.min(w, h) * 0.2,
+    Math.min(w, h) * 0.25,
     w / 2,
     h / 2,
-    Math.max(w, h) * 0.7,
+    Math.max(w, h) * 0.75,
   );
   v.addColorStop(0, "rgba(11,14,23,0)");
-  v.addColorStop(1, "rgba(11,14,23,0.7)");
+  v.addColorStop(1, "rgba(11,14,23,0.45)");
   ctx.fillStyle = v;
   ctx.fillRect(0, 0, w, h);
 }
@@ -196,6 +224,7 @@ export default function GridDistortion({
     const ro = new ResizeObserver(resize);
     ro.observe(container);
     resize();
+    renderer.render(scene, camera); // paint one frame immediately
 
     // pointer state
     const mouseState = { x: 0, y: 0, prevX: 0, prevY: 0, vX: 0, vY: 0 };
@@ -269,6 +298,7 @@ export default function GridDistortion({
       { threshold: 0.01 },
     );
     io.observe(container);
+    start(); // IO will stop it again if the hero is already offscreen
 
     function onVisibility() {
       if (document.hidden) stop();

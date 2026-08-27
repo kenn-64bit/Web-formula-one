@@ -33,10 +33,10 @@ export function HeroBackground() {
       ) : (
         <>
           <GridDistortion className="absolute inset-0" />
-          {/* scrim so the headline keeps contrast over the moving grid */}
+          {/* light scrim so the headline keeps contrast over the moving grid */}
           <div
             aria-hidden
-            className="pointer-events-none absolute inset-0 bg-ink-900/40 [mask-image:linear-gradient(to_bottom,black,transparent_35%,transparent_65%,black)]"
+            className="pointer-events-none absolute inset-0 bg-ink-900/20 [mask-image:radial-gradient(60%_55%_at_50%_45%,black,transparent_75%)]"
           />
         </>
       )}
