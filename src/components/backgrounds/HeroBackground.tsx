@@ -7,9 +7,9 @@ const GridDistortion = dynamic(() => import("./GridDistortion"), { ssr: false })
 
 /**
  * Hero backdrop, layered bottom → top:
- *  1. an always-on CSS indigo/violet field (visible even if WebGL / the chunk fails)
+ *  1. an always-on CSS amber/bronze field (visible even if WebGL / the chunk fails)
  *  2. the WebGL grid-distortion field (covers the CSS layer when it runs)
- *  3. a soft scrim + cyan glow for headline contrast
+ *  3. a soft scrim + gold glow for headline contrast
  */
 export function HeroBackground() {
   return (

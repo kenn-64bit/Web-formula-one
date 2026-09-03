@@ -4,7 +4,7 @@ import { Xendit } from "xendit-node";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { env, siteUrl } from "@/lib/env";
 import { PLANS, isTierId } from "@/lib/plans";
-import { isValidEmail } from "@/lib/subscription";
+import { isValidEmail, isValidName, isValidPhone } from "@/lib/subscription";
 
 export const runtime = "nodejs";
 
@@ -16,9 +16,18 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
   }
 
-  const { tier, email: rawEmail } = (body ?? {}) as {
+  const {
+    tier,
+    email: rawEmail,
+    firstName: rawFirstName,
+    lastName: rawLastName,
+    phone: rawPhone,
+  } = (body ?? {}) as {
     tier?: string;
     email?: string;
+    firstName?: string;
+    lastName?: string;
+    phone?: string;
   };
   if (!tier || !isTierId(tier)) {
     return NextResponse.json({ error: "Unknown tier" }, { status: 400 });
@@ -26,7 +35,16 @@ export async function POST(req: Request) {
   if (!isValidEmail(rawEmail)) {
     return NextResponse.json({ error: "Enter a valid email" }, { status: 400 });
   }
+  if (!isValidName(rawFirstName) || !isValidName(rawLastName)) {
+    return NextResponse.json({ error: "Enter your first and last name" }, { status: 400 });
+  }
+  if (!isValidPhone(rawPhone)) {
+    return NextResponse.json({ error: "Enter a valid contact number" }, { status: 400 });
+  }
   const email = rawEmail.trim().toLowerCase();
+  const firstName = rawFirstName.trim();
+  const lastName = rawLastName.trim();
+  const phone = rawPhone.trim();
   const plan = PLANS[tier];
   const externalId = randomUUID();
 
@@ -40,6 +58,12 @@ export async function POST(req: Request) {
         amount: plan.price,
         currency: "PHP",
         payerEmail: email,
+        customer: {
+          givenNames: firstName,
+          surname: lastName,
+          email,
+          mobileNumber: phone,
+        },
         description: `APEX Signals — ${plan.name} (one-time, lifetime access)`,
         successRedirectUrl: `${siteUrl}/success?ref=${externalId}`,
         failureRedirectUrl: `${siteUrl}/?failed=1`,
@@ -64,6 +88,9 @@ export async function POST(req: Request) {
     email,
     tier,
     status: "pending",
+    first_name: firstName,
+    last_name: lastName,
+    phone,
     xendit_invoice_id: invoiceId,
     xendit_external_id: externalId,
     amount: plan.price,

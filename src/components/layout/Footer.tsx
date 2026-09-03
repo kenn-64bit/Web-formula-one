@@ -12,7 +12,7 @@ export function Footer() {
   return (
     <footer className="mt-auto">
       <CheckeredDivider />
-      <div className="relative isolate overflow-hidden bg-[#0c0f16]">
+      <div className="relative isolate overflow-hidden bg-[#100b06]">
         {/* ASCII "creation" backdrop */}
         <div
           aria-hidden
@@ -22,7 +22,7 @@ export function Footer() {
         {/* vignette on top of the backdrop */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 -z-10 [background:radial-gradient(ellipse_at_center,transparent_35%,rgba(12,15,22,0.85)_100%)]"
+          className="pointer-events-none absolute inset-0 -z-10 [background:radial-gradient(ellipse_at_center,transparent_35%,rgba(16,11,6,0.85)_100%)]"
         />
         <div className="relative mx-auto max-w-canvas px-5 py-16 md:px-20">
           <div className="flex flex-wrap items-center gap-x-10 gap-y-4 opacity-60">

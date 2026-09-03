@@ -152,7 +152,7 @@ export function PricingSection() {
               {LEADERBOARD.map((row, i) => (
                 <tr
                   key={row.feature}
-                  className="border-t border-b border-[rgba(0,245,212,0.3)]"
+                  className="border-t border-b border-[rgba(228,178,74,0.28)]"
                 >
                   <td className="h-14 font-mono text-[22px] text-text-secondary">
                     {i + 4}

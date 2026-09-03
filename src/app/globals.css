@@ -1,17 +1,18 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink-900: #0b0e17;
-  --color-ink-800: #161b26;
-  --color-panel: rgba(255, 255, 255, 0.06);
-  --color-panel-border: rgba(255, 255, 255, 0.14);
+  --color-ink-900: #100b06;
+  --color-ink-800: #1c150d;
+  --color-panel: rgba(246, 225, 190, 0.05);
+  --color-panel-border: rgba(246, 225, 190, 0.14);
 
-  --color-cyan: #00f5d4;
-  --color-red: #ff1801;
-  --color-papaya: #ff8000;
+  /* token names kept for churn-free swap; palette is now the logo's gold/bronze */
+  --color-cyan: #e4b24a; /* was cyan — now candelabra gold (primary) */
+  --color-red: #c64a32; /* was F1 red — now burnt sienna (errors / warnings) */
+  --color-papaya: #8f7a4e; /* was papaya — now khaki bronze */
 
-  --color-text-primary: #f5f7fa;
-  --color-text-secondary: #8b93a7;
+  --color-text-primary: #f6f1e8;
+  --color-text-secondary: #9a8f7d;
 
   --font-display: var(--font-rajdhani), "Rajdhani", system-ui, sans-serif;
   --font-body: var(--font-space-grotesk), "Space Grotesk", system-ui, sans-serif;
@@ -31,7 +32,7 @@ body {
 
 body {
   background:
-    radial-gradient(600px circle at 50% 12%, rgba(0, 245, 212, 0.08), transparent 70%),
+    radial-gradient(600px circle at 50% 12%, rgba(228, 178, 74, 0.09), transparent 70%),
     linear-gradient(160deg, var(--color-ink-900) 0%, var(--color-ink-800) 100%);
   background-attachment: fixed;
   color: var(--color-text-primary);
@@ -87,7 +88,7 @@ body {
 }
 
 .text-glow-cyan {
-  text-shadow: 0 0 24px rgba(0, 245, 212, 0.45);
+  text-shadow: 0 0 24px rgba(228, 178, 74, 0.42);
 }
 
 .mono-label {
@@ -98,14 +99,14 @@ body {
 
 /* Always-on CSS field behind the hero (shows even if WebGL fails) */
 .hero-field {
-  background-color: #0b0e17;
+  background-color: #100b06;
   background-image:
-    radial-gradient(60% 60% at 18% 28%, rgba(14, 42, 44, 0.9), transparent 70%),
-    radial-gradient(55% 55% at 74% 18%, rgba(18, 54, 66, 0.85), transparent 70%),
-    radial-gradient(72% 72% at 50% 66%, rgba(0, 245, 212, 0.22), transparent 72%),
-    radial-gradient(45% 45% at 86% 72%, rgba(12, 74, 70, 0.85), transparent 70%),
-    radial-gradient(50% 50% at 26% 84%, rgba(0, 200, 190, 0.18), transparent 70%),
-    radial-gradient(24% 24% at 44% 34%, rgba(210, 255, 248, 0.4), transparent 65%);
+    radial-gradient(60% 60% at 18% 28%, rgba(58, 38, 22, 0.9), transparent 70%),
+    radial-gradient(55% 55% at 74% 18%, rgba(74, 48, 26, 0.82), transparent 70%),
+    radial-gradient(72% 72% at 50% 66%, rgba(228, 178, 74, 0.22), transparent 72%),
+    radial-gradient(45% 45% at 86% 72%, rgba(90, 58, 30, 0.8), transparent 70%),
+    radial-gradient(50% 50% at 26% 84%, rgba(192, 118, 58, 0.18), transparent 70%),
+    radial-gradient(24% 24% at 44% 34%, rgba(255, 240, 214, 0.4), transparent 65%);
   background-size: 180% 180%;
   background-position: 50% 50%;
   animation: hero-field-drift 26s ease-in-out infinite alternate;

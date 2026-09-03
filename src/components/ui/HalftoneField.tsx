@@ -7,7 +7,7 @@ type Props = {
 };
 
 /** Radial dot-matrix motif. Absolutely positioned; give the parent `relative`. */
-export function HalftoneField({ className, tint = "#00f5d4" }: Props) {
+export function HalftoneField({ className, tint = "#e4b24a" }: Props) {
   return (
     <div
       aria-hidden

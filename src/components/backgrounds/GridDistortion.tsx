@@ -44,26 +44,26 @@ const fragmentShader = /* glsl */ `
 
 type Blob = { x: number; y: number; r: number; color: string };
 
-/** Paints a soft flowing indigo/violet colour field onto a canvas (no grid). */
+/** Paints a soft flowing amber/bronze colour field onto a canvas (no grid). */
 function paintField(canvas: HTMLCanvasElement, w: number, h: number) {
   canvas.width = w;
   canvas.height = h;
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
 
-  ctx.fillStyle = "#0B0E17";
+  ctx.fillStyle = "#100B06";
   ctx.fillRect(0, 0, w, h);
 
   const s = Math.max(w, h);
   const blobs: Blob[] = [
-    { x: 0.16, y: 0.28, r: 0.78, color: "#0E2A2C" },
-    { x: 0.72, y: 0.18, r: 0.7, color: "#123642" },
-    { x: 0.5, y: 0.64, r: 0.9, color: "rgba(0, 245, 212, 0.28)" },
-    { x: 0.86, y: 0.72, r: 0.58, color: "#0C4A46" },
-    { x: 0.26, y: 0.84, r: 0.6, color: "rgba(0, 200, 190, 0.22)" },
-    { x: 0.62, y: 0.4, r: 0.4, color: "#161B26" },
-    { x: 0.8, y: 0.5, r: 0.2, color: "rgba(255, 128, 0, 0.12)" },
-    { x: 0.44, y: 0.34, r: 0.24, color: "rgba(210, 255, 248, 0.5)" },
+    { x: 0.16, y: 0.28, r: 0.78, color: "#3A2616" },
+    { x: 0.72, y: 0.18, r: 0.7, color: "#4A301A" },
+    { x: 0.5, y: 0.64, r: 0.9, color: "rgba(228, 178, 74, 0.26)" },
+    { x: 0.86, y: 0.72, r: 0.58, color: "#5A3A1E" },
+    { x: 0.26, y: 0.84, r: 0.6, color: "rgba(192, 118, 58, 0.20)" },
+    { x: 0.62, y: 0.4, r: 0.4, color: "#1C150D" },
+    { x: 0.8, y: 0.5, r: 0.2, color: "rgba(232, 150, 60, 0.14)" },
+    { x: 0.44, y: 0.34, r: 0.24, color: "rgba(255, 240, 214, 0.5)" },
   ];
 
   ctx.globalCompositeOperation = "lighter";
@@ -81,8 +81,8 @@ function paintField(canvas: HTMLCanvasElement, w: number, h: number) {
 
   // deepen the low corner for contrast
   const shade = ctx.createLinearGradient(0, 0, w * 0.4, h);
-  shade.addColorStop(0, "rgba(11,14,23,0)");
-  shade.addColorStop(1, "rgba(8,10,18,0.5)");
+  shade.addColorStop(0, "rgba(16,11,6,0)");
+  shade.addColorStop(1, "rgba(12,8,4,0.5)");
   ctx.fillStyle = shade;
   ctx.fillRect(0, 0, w, h);
 
@@ -95,8 +95,8 @@ function paintField(canvas: HTMLCanvasElement, w: number, h: number) {
     h / 2,
     Math.max(w, h) * 0.8,
   );
-  v.addColorStop(0, "rgba(11,14,23,0)");
-  v.addColorStop(1, "rgba(11,14,23,0.62)");
+  v.addColorStop(0, "rgba(16,11,6,0)");
+  v.addColorStop(1, "rgba(16,11,6,0.62)");
   ctx.fillStyle = v;
   ctx.fillRect(0, 0, w, h);
 }

@@ -92,7 +92,7 @@ export function Header() {
                   className={cn(
                     "mono-label pb-0.5 text-[11px] transition-colors",
                     active
-                      ? "border-b-2 border-cyan text-cyan [box-shadow:0_8px_12px_-6px_rgba(0,245,212,0.4)]"
+                      ? "border-b-2 border-cyan text-cyan [box-shadow:0_8px_12px_-6px_rgba(228,178,74,0.4)]"
                       : "border-b-2 border-transparent text-text-secondary hover:text-text-primary",
                   )}
                 >

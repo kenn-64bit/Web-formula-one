@@ -13,10 +13,12 @@ export type Plan = {
   features: string[];
 };
 
+// Key names kept (rookie/podium/constructor still map to red/cyan/papaya) so the
+// swap stays churn-free; the values now follow the logo's gold/bronze palette.
 export const ACCENTS = {
-  cyan: "#00f5d4",
-  red: "#ff1801",
-  papaya: "#ff8000",
+  cyan: "#e4b24a", // gold — podium / "pole position"
+  red: "#c0763a", // copper — rookie
+  papaya: "#8f7a4e", // khaki bronze — constructor
 } as const;
 
 /**

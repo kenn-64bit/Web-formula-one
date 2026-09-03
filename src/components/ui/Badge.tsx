@@ -32,7 +32,7 @@ export function FeatureBadge({
           <path
             d="M5 13l4 4L19 7"
             fill="none"
-            stroke="#0B0E17"
+            stroke="#100b06"
             strokeWidth={3}
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -46,7 +46,7 @@ export function FeatureBadge({
 /** Small diagonal-cut pill, e.g. "POLE POSITION". */
 export function Pill({
   children,
-  accent = "#00f5d4",
+  accent = "#e4b24a",
 }: {
   children: React.ReactNode;
   accent?: string;
